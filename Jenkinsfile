@@ -14,21 +14,21 @@ pipeline {
         stage('Build Order Service Docker Image') {
             steps {
                 echo 'Building Order Service Docker Image...'
-                sh 'docker build -t order-service:1.0 ./order-service'
+                sh '/usr/local/bin/docker build -t order-service:1.0 ./order-service'
             }
         }
 
         stage('Build Payment Service Docker Image') {
             steps {
                 echo 'Building Payment Service Docker Image...'
-                sh 'docker build -t payment-service:1.0 ./payment-service'
+                sh '/usr/local/bin/docker build -t payment-service:1.0 ./payment-service'
             }
         }
 
         stage('Check Docker Images') {
             steps {
                 echo 'Checking Docker Images...'
-                sh 'docker images'
+                sh '/usr/local/bin/docker images'
             }
         }
     }
