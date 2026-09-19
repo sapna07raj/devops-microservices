@@ -45,6 +45,30 @@ pipeline {
             }
         }
 
+        stage('Push Images to Docker Hub') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub',
+                        usernameVariable: 'DOCKER_USERNAME',
+                        passwordVariable: 'DOCKER_PASSWORD'
+                    )
+                ]) {
+                    sh '''
+                        echo "$DOCKER_PASSWORD" | /usr/local/bin/docker login -u "$DOCKER_USERNAME" --password-stdin
+
+                        /usr/local/bin/docker tag order-service:1.0 "$DOCKER_USERNAME/order-service:1.0"
+                        /usr/local/bin/docker tag payment-service:1.0 "$DOCKER_USERNAME/payment-service:1.0"
+
+                        /usr/local/bin/docker push "$DOCKER_USERNAME/order-service:1.0"
+                        /usr/local/bin/docker push "$DOCKER_USERNAME/payment-service:1.0"
+
+                        /usr/local/bin/docker logout
+                    '''
+                }
+            }
+        }
+
         stage('Check Docker Images') {
             steps {
                 echo 'Checking Docker Images...'
@@ -55,7 +79,7 @@ pipeline {
 
     post {
         success {
-            echo 'Tests passed and Docker images built successfully!'
+            echo 'Tests passed, images built and pushed to Docker Hub successfully!'
         }
 
         failure {
