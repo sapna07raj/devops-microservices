@@ -1,0 +1,23 @@
+services:
+
+  payment-service:
+    build: ./payment-service
+    container_name: payment-container
+    ports:
+      - "5001:5001"
+    networks:
+      - microservices-network
+
+  order-service:
+    build: ./order-service
+    container_name: order-container
+    ports:
+      - "8000:8000"
+    depends_on:
+      - payment-service
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+    driver: bridge

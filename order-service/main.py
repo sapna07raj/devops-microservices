@@ -3,7 +3,7 @@ import requests
 
 app = FastAPI()
 
-PAYMENT_SERVICE_URL = "http://payment-container:5001"
+PAYMENT_SERVICE_URL = "http://payment-service:5001"
 
 @app.get("/")
 def home():
