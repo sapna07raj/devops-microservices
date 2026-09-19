@@ -15,6 +15,22 @@ pipeline {
             }
         }
 
+        stage('Install Test Dependencies') {
+            steps {
+                echo 'Installing Pytest and HTTPX...'
+                sh 'python3 -m venv .jenkins-venv'
+                sh '.jenkins-venv/bin/pip install --upgrade pip'
+                sh '.jenkins-venv/bin/pip install -r requirements-test.txt'
+            }
+        }
+
+        stage('Run Automated Tests') {
+            steps {
+                echo 'Running Pytest tests...'
+                sh '.jenkins-venv/bin/python -m pytest tests/test_services.py -v'
+            }
+        }
+
         stage('Build Order Service Docker Image') {
             steps {
                 echo 'Building Order Service Docker Image...'
@@ -39,11 +55,11 @@ pipeline {
 
     post {
         success {
-            echo 'Build completed successfully!'
+            echo 'Tests passed and Docker images built successfully!'
         }
 
         failure {
-            echo 'Build failed. Check the console output.'
+            echo 'Pipeline failed. Check the console output.'
         }
     }
 }
